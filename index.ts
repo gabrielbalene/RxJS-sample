@@ -69,6 +69,42 @@ function attempt0() {
     () => console.log("the end")
   );
 
+//TP8  
+  const fakeObservable$ = Observable.create(obs => {
+    setTimeout(() => obs.next(1), 1000);
+    setTimeout(() => obs.next(2), 2000);
+    setTimeout(() => obs.complete(), 3000);    
+  });
+  fakeObservable$.subscribe(
+    val => console.log(`FO: ${val}`),
+    (err) => console.log('error ', err),
+    () => console.log('completed')
+  );
+ 
+  //TP9: Now let’s say there is a scenario where we have an Observable that emits an array,  
+  // and for each item in the array we need to fetch data from the server.
+  const getData = (param) => {
+    return of(`retrieved new data with param ${param}`).pipe(delay(1000));
+  }
+  // using a regular map  
+  from([1,2,3,4]).pipe(
+    map(param => getData(param))
+  ).subscribe((val: Observable<string>) => {
+    val.subscribe(data => console.log(data))
+  });
+ 
+  //TP10: using map and mergeAll
+  /* from([1,2,3,4]).pipe(
+    map(param => getData(param)),
+    mergeAll()
+  ).subscribe(val => console.log(val));
+  */
+  
+  //TP11: using mergeMap
+  // map to observable and emit values
+  from([1,2,3,4]).pipe(
+    mergeMap(param => getData(param))
+  ).subscribe(val => console.log(val));
 
 
 }
